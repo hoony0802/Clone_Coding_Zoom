@@ -1,32 +1,17 @@
-WebSocket: 실시간 요청과 응답을 가능하게 하는 프로토콜
+--------WebSocket: 실시간(real-time) 요청과 응답을 가능하게 하는 프로토콜
 
+e.g.) wss://_____.___.___
+=> Secure Web Socket(WSS)
 
+연결 중일때만 쌍방으로 소통 가능
 
+WebAPI로 브라우저에 내장되어 있음
 
+node.js의 WebSocket 라이브러리: ws
 
-
-
-
-
-
+----------Socket.io
+WebSocket을 쉽게 구현할 수 있는 프레임워크
 
 
 ----------WebRTC
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------------Socket.io
