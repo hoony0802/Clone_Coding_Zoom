@@ -1,8 +1,9 @@
 // import WebSocket from "ws";
+// import { Server } from "socket.io";
+// import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
+import SocketIO from "socket.io";
 
 const app = express();
 
@@ -14,8 +15,32 @@ app.get("/*", (req, res) => res.redirect("/"));
 
 //  * http,WebSocket 둘 다 실행
 const httpServer = http.createServer(app);
+const wsServer = SocketIO(httpServer);
 
-// * Admin UI
+wsServer.on("connection", (socket) => {
+  socket.on("join_room", (roomName) => {
+    socket.join(roomName);
+    socket.to(roomName).emit("welcome");
+  });
+
+  socket.on("offer", (offer, roomName) => {
+    socket.to(roomName).emit("offer", offer);
+  });
+
+  socket.on("answer", (answer, roomName) => {
+    socket.to(roomName).emit("answer", answer);
+  });
+
+  socket.on("ice", (ice, roomName) => {
+    socket.to(roomName).emit("ice", ice);
+  });
+});
+
+const handleListen = () => console.log(`Listening on http://localhost:3000`);
+httpServer.listen(3000, handleListen);
+
+// * socket.io 구현
+/* // * Admin UI
 const wsServer = new Server(httpServer, {
   cors: {
     origin: ["https://admin.socket.io"],
@@ -49,8 +74,8 @@ const publicRooms = () => {
 // * 방 인원수
 const countRoom = (roomName) => {
   return wsServer.sockets.adapter.rooms.get(roomName)?.size;
-  /*  ===  wsServer.sockets.adapter.rooms.get ? 
-  return wsServer.sockets.adapter.rooms.get(roomName).size : reuturn undefined; */
+  // ===  wsServer.sockets.adapter.rooms.get ? 
+  // return wsServer.sockets.adapter.rooms.get(roomName).size : reuturn undefined; 
 };
 
 wsServer.on("connection", (socket) => {
@@ -92,7 +117,7 @@ wsServer.on("connection", (socket) => {
   });
 
   socket.on("nickname", (nickname) => (socket.nickname = nickname));
-});
+}); */
 
 // * WebSocket 구현
 /* const wss = new WebSocket.Server({ server });
@@ -123,7 +148,4 @@ wss.on("connection", (socket) => {
           }
         });
       }); */
-
-const handleListen = () => console.log(`Listening on http://localhost:3000`);
 // app.listen(3000, handleListen);
-httpServer.listen(3000, handleListen);
